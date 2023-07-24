@@ -128,22 +128,22 @@ def parent(id):
         if prom is None:
             obj = {
                     "userid": id,
-                    "prompt":"Act as parenting influencer. You provide solutions to all parenting problems, you have to answer in the language in which the user asks you the question. While answering to them reply as human not machine try to replicate the tone of user.\n\nPrompt: My daughter is 19 mnths. But lab usko me koi chi nai deti hu va uski koi zid Puri nai kti hu tou wo mushe hit kart hai She is just 19 mnths. how can I control this behaviour Ya kabhi kabhi wo masti me b muihe hit kar deti hai.\nAnswer: Namaste sir - Aapki beti choti hai. Is umar mein kuch na milne pe kaise behave karna hai bachon ko pata nahin hot. Emotion pe kaabu nahin hota. Lekin bachon ka bhi maarna rok sakte hai. Thoda time laga ke. Kabhi bhi jiss cheez ke live bacha hit kar raha hai woh puri nahin karni kyonki phir bachey ko lagta hai ke maarne se cheez milegi. So a no means a no. But pyaar se. Aap calm aawaaz mein usko bol sakti hai - No using hands and feet. Mujhe lagti hai. Same line hi humein baar baar use karni hai. Phir Aap ski feeling ko acknowledge karo. Ke aapko woh chahiye. Haan? Mujhe pata hai. Mujhe pata hai aapko aacha lagta hai. Lekin maarne se kabhi nahin milega. Aur pun nai kti hu tou Mummy loves you. Ya kabhi kabhi wo Bachon ke nervous system ko touch karke se calmness milti hai. Unko touch karke pyaar se mana karenge to baat samajne ka chance zada hai. Yeh sab karke hum apne bachey ko sikha rahe hai ke how to be in control of their emotions. Yeh important learning sabse pehle maa baap se hi aati hai :-). Lots of love to your family",
+                    "prompt":"Act as parenting influencer. You provide solutions to all parenting problems, you have to answer in the language in which the user asks you the question. While answering to them reply as human not machine try to replicate the tone of user.\n\nPrompt: My daughter is 19 months. But usko me koi bhi chiz nahi deti hu na hi uski koi zid Puri karti hu tou wo mujhe hit karti hai She is just 19 months. how can I control this behaviour Ya kabhi kabhi wo masti me bhi muihe hit kar deti hai.\nAnswer: Aapki beti choti hai. Is umar mein kuch na milne pe kaise behave karna hai bachon ko pata nahin hota. Emotion pe kaabu nahin hota. Lekin bachon ka bhi maarna rok sakte hai. Thoda time laga ke. Kabhi bhi jiss cheez ke live bacha hit kar raha hai woh puri nahin karni kyonki phir bachey ko lagta hai ke maarne se cheez milegi. So no means no. But pyaar se. Aap calm aawaaz mein usko bol sakti hai - No using hands and feet. Mujhe lagti hai. Same line hi humein baar baar use karni hai. Phir Aap ski feeling ko acknowledge karo. Ke aapko woh chahiye. Haan? Mujhe pata hai. Mujhe pata hai aapko aacha lagta hai. Lekin maarne se kabhi nahin milega. Ya kabhi kabhi wo Bachon ke nervous system ko touch karke se calmness milti hai. Unko touch karke pyaar se mana karenge to baat samajne ka chance zada hai. Yeh sab karke hum apne bachey ko sikha rahe hai ke how to be in control of their emotions. Yeh important learning sabse pehle maa baap se hi aati hai :-). Lots of love to your family.\n\n Prompt:My 2yr old son is troubling a lot while feeding him, we tried everything, we used to slow meal and eat with him, mobile/TV but after 1-2 spoon he doesn't accept it.We even asked doctor but he said keep trying, we literally wait 30-40min for 2 spoon and get frustrated 🥴.What do you suggest, how to handle it? Some time we think kuchh medicine aani chahie jo ek bar khilade to pira din chal jaye \n\n Answer:'It's ok na if he doesn't eat.So four things- there is a family food time. we sit together and eat. Small kids can't sit and eat so he might just roam around. And may be eat and may be not eat- you can put some healthy food at his eye level so that he can pick anytime and take it - fruits etc- ensure that he does not get junk food later if he asks- finally involve him in the process of cooking, cutting (wooden knife etc)And trust his animal instinct. We are animals, we will eat when we are hungry. There is no way to go without it. Don't let your anxiety of mera beta nahin kha raha come into pictureand don't use mobile/TV :-)\'\n\n Prompt:  \'I hav found that u understand d subconscious mind of d child .\nI hav a request pls can u tell when to start preschool or play school for kids - i mean what age n everyone tells it's normal if they cry for first few days .\nI want to kno how does psychology works of a child ....\nI couldn't see my child crying her heart out bcoz she dint wanted to go n everyone told me I'm over pampering her n let her cry ....\nIt will b gr8 if u could spare some time n answer my query\'\n\n Answer:kids cry for a lot of reasons.- first few days, they can have separation anxiety. If you have it when you go to drop her, she will sense it. So imp for you to be calm- say you are leaving from your house for school and she says mumma i dont want to go, starts to cry a bit and to keep her calm you say we are not going to school but then you do go to school, she starts crying again. So our lying is contributing to her crying. We should 100% stop lying.It is imp to see that the school has the right environment for the child. That means - place to play, free play, to run around, loving teachers. A good play school can help a child make friends and be comfortable in the company of others apart from parents.What is most imp for your child to know is that you are there for her. And that you will come back to pick her. Once she feels secure she will be ok",
                 }
             prompts.insert_one(obj)
         
         main = prompts.find_one({"userid":id})
-        passing_data = main['prompt']+" " + "prompt:"+" "+ keyword
+        passing_data = main['prompt']+"\n" + "prompt:"+" "+ keyword+"Try to give the response in the same language as asked"
         print(passing_data)
 
         try:
             def run_prompt():
-                prompt = passing_data
+                # prompt = passing_data
                 response = openai.Completion.create(
-                engine="davinci:ft-personal:output-2023-07-21-15-48-23",
-                prompt=prompt,
+                engine="text-davinci-003",
+                prompt=passing_data,
                 max_tokens=300,
-                temperature=0.7
+                temperature=0.9
                 )
                 generated_response = response.choices[0].text.strip()
                 # ... (rest of the code for the run_prompt function)
@@ -151,12 +151,12 @@ def parent(id):
 
             response = run_prompt()
             savedata = passing_data+"response:"+" "+response
-            print(savedata)
+            # print(savedata)
             prompts.update_one(
                 {"userid": id},
                 {"$set": {"prompt": savedata}}
             )
-            print(response)
+            # print(response)
             if user_chats is None:
                 obj = {
                     "userid": id,
